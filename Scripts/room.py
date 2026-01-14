@@ -421,11 +421,14 @@ class Door(Tile):
       if self.state == "open":
         if self.open_images: self.image = self.open_images[self.open_timer.count(self.anim_speed, len(self.open_images), 0)]
     
-  def transport(self, player): self.main.playback_on, self.main.selected_key = False, 0; player.rect.x, player.rect.y = self.led_pos[0], self.led_pos[1]; player.key_frame_rect.x, player.key_frame_rect.y = self.led_pos[0], self.led_pos[1]; self.main.time_since_start = time()
+  def transport(self, player):
+    self.main.playback_on, self.main.selected_key = False, 0; player.rect.x, player.rect.y = self.led_pos[0], self.led_pos[1]; player.key_frame_rect.x, player.key_frame_rect.y = self.led_pos[0], self.led_pos[1]; self.main.time_since_start = time()
+    for button in self.main.rooms[self.led_room].menu["items"]: button["Clicked"] = False
 
   def transport_everyone(self):
     self.main.playback_on, self.main.selected_key = False, 0
     for player in self.main.players: player.rect.x, player.rect.y = self.led_pos[0], self.led_pos[1]; player.key_frame_rect.x, player.key_frame_rect.y = self.led_pos[0], self.led_pos[1]; self.main.time_since_start = time()
+    for button in self.main.rooms[self.led_room].menu["items"]: button["Clicked"] = False
 
   def play_transition(self, screen, dt=1):
     if self.t_playing:

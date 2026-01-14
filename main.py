@@ -2360,7 +2360,7 @@ def remove_image(none):
     if main.selected_image_index == 2: main.ui.instances[main.selected_ui]["I Image 2"] = ""
     go_to(35); main.selected_image_index = 1
 
-def add_menu_item(none): main.rooms[main.selected_room].menu["items"].append({"I": len(main.rooms[main.selected_room].menu["items"]), "X_I": 0, "Y_I": 0, "X_P": 0, "Y_P": 0, "TPX": 0, "TPY": 0, "IPX": 0, "IPY": 0, "X_PS": 0, "Y_PS": 0, "TPXS": 0, "TPYS": 0, "IPXS": 0, "IPYS": 0, "A": None, "T": "", "I_Anim_A": "DO", "O_Anim_A": "DO", "I_Anim_P": "DO", "O_Anim_P": "DO", "Cam_X": 0, "Cam_Y": 0, "Text_Data": ["None", 20, [], "", "White", "Transparent", "Black", False, False, False, False, False, "Left", 0, "LTR", 0, [0, 0], 255, 0, [False, False], "Default", False, ["", ""], 0, False], "Text_DataS": ["None", 20, [], "", "White", "Transparent", "Black", False, False, False, False, False, "Left", 0, "LTR", 0, [0, 0], 255, 0, [False, False], "Default", False, ["", ""], 0, False], "S": "", "Image_Path": "", "Image_PathS": "", "Anim_Rate": -1, "Anim_RateS": -1, "BX": 0, "BY": 0, "BW": 0, "BH": 0, "BT": 0, "BR": 0, "BD": 0, "BC": [], "BXS": 0, "BYS": 0, "BWS": 0, "BHS": 0, "BTS": 0, "BRS": 0, "BDS": 0, "BCS": [], "N1": "", "N2": "", "N3": "", "flags": [], "SFX": None, "Text_Surface": None, "Image_Surface": None, "Text_SurfaceS": None, "Image_SurfaceS": None, "Timer": Timer(), "Timer2": Timer()}); main.selected_menu_item_index = len(main.rooms[main.selected_room].menu["items"]) - 1
+def add_menu_item(none): main.rooms[main.selected_room].menu["items"].append({"I": len(main.rooms[main.selected_room].menu["items"]), "X_I": 0, "Y_I": 0, "X_P": 0, "Y_P": 0, "TPX": 0, "TPY": 0, "IPX": 0, "IPY": 0, "X_PS": 0, "Y_PS": 0, "TPXS": 0, "TPYS": 0, "IPXS": 0, "IPYS": 0, "A": None, "T": "", "I_Anim_A": "DO", "O_Anim_A": "DO", "I_Anim_P": "DO", "O_Anim_P": "DO", "Cam_X": 0, "Cam_Y": 0, "Text_Data": ["None", 20, [], "", "White", "Transparent", "Black", False, False, False, False, False, "Left", 0, "LTR", 0, [0, 0], 255, 0, [False, False], "Default", False, ["", ""], 0, False], "Text_DataS": ["None", 20, [], "", "White", "Transparent", "Black", False, False, False, False, False, "Left", 0, "LTR", 0, [0, 0], 255, 0, [False, False], "Default", False, ["", ""], 0, False], "S": "", "Image_Path": "", "Image_PathS": "", "Anim_Rate": -1, "Anim_RateS": -1, "BX": 0, "BY": 0, "BW": 0, "BH": 0, "BT": 0, "BR": 0, "BD": 0, "BC": [], "BXS": 0, "BYS": 0, "BWS": 0, "BHS": 0, "BTS": 0, "BRS": 0, "BDS": 0, "BCS": [], "N1": "", "N2": "", "N3": "", "flags": [], "SFX": None, "Text_Surface": None, "Image_Surface": None, "Text_SurfaceS": None, "Image_SurfaceS": None, "Timer": Timer(), "Timer2": Timer(), "Clicked": False}); main.selected_menu_item_index = len(main.rooms[main.selected_room].menu["items"]) - 1
 def remove_menu_item(none):
   for button in main.rooms[main.selected_room].menu["items"]:
     if button["I"] == main.selected_menu_item_index: main.rooms[main.selected_room].menu["items"].remove(button)
@@ -2765,7 +2765,7 @@ def clear_game(none=None):
   for room in main.rooms:
     room.hm, room.vm, room.borders, room.selected_item = room.spawn_hm, room.spawn_vm, room.spawn_borders.copy(), [0, 0]
     if "active" in room.menu["flags"]: room.menu_active = True
-    for button in room.menu["items"]: button["Timer"].reset(); button["Timer2"].reset()
+    for button in room.menu["items"]: button["Timer"].reset(); button["Timer2"].reset(); button["Clicked"] = False
     for zone in room.zones: zone.passed = False; zone.left = False
     for layer in room.layers:
       for coin in layer.collectibles:
@@ -6189,9 +6189,10 @@ class Main:
       for button in main.rooms[main.current_room].menu["items"]:
         if [button["X_I"], button["Y_I"]] == main.rooms[main.current_room].selected_item:
           for port in main.ports:
-            if port.buttons["Press"]["a"]: #ON BUTTON CLİCK
+            if port.buttons["Press"]["a"] and not button["Clicked"]: #ON BUTTON CLİCK
               if button["A"]: self.play_cutscene(button["A"])
               port.disable()
+              button["Clicked"] = True
               if type(button["S"]) == list: button["SFX"] = pygame.mixer.Sound(self.main.active_directory + "Sounds/sfx/" + button["S"][random.randrange(0, len(button["S"]))])
               if button["S"]: button["SFX"].play()
               break

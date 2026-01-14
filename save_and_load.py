@@ -162,7 +162,7 @@ def save_game(name, main):
     new_items = []
     for button in room.menu["items"]:
       new_button = button.copy()
-      for key in ("Text_Surface", "Text_SurfaceS", "Image_Surface", "Image_SurfaceS", "Timer", "Timer2", "SFX"): new_button.pop(key, None)
+      for key in ("Text_Surface", "Text_SurfaceS", "Image_Surface", "Image_SurfaceS", "Timer", "Timer2", "SFX", "Clicked"): new_button.pop(key, None)
       new_items.append(new_button)
     menu["items"] = new_items
     
@@ -824,6 +824,7 @@ def load_game(name, main, editor_mode=True):
 
         button["Timer"] = Timer()
         button["Timer2"] = Timer()
+        button["Clicked"] = False
 
         if button["S"] == "": button["SFX"] = None
         elif type(button["S"]) != list: button["SFX"] = pygame.mixer.Sound(main.active_directory + "Sounds/sfx/" + button["S"])

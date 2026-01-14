@@ -721,10 +721,9 @@ class Player(Actor): #we use su
           #if cs.condition_gate == "or": self.main.play_cutscene(cs)
           cs_conditions_met.append("Start of Room"); break
 
-
     for door in self.main.rooms[self.main.current_room].doors:
       if (((self.state == "door" and door.requires_input) or not door.requires_input) and (door.rect.colliderect(rect) and door.passable and not door.t_playing)) or door.cutscene_transport:
-        door.t_playing = True; self.main.playback_on = False; self.main.frame_timer.reset(); self.main.selected_key = 0; door.cutscene_transport = False
+        door.t_playing = True; self.main.frame_timer.reset(); self.main.selected_key = 0; door.cutscene_transport = False
         if door.enter_sound:
           if type(door.enter_sound) == list: door.enter_sfx = pygame.mixer.Sound(self.main.active_directory + "Sounds/sfx/" + door.enter_sound[random.randrange(0, len(door.enter_sound))])
           door.enter_sfx.play()
