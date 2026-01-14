@@ -1,0 +1,122 @@
+Version 0.1
+- Added rooms
+- Added soundtrack
+- Added tile placement and map
+- Added layer parallexing
+- Added player
+
+Version 0.2
+- Added player variables
+- Added actors
+- Added collectibles
+- Added scroll options
+- Added ice tile and non-solid tile
+
+Version 0.3
+- Reoptimized character animation system (seto's)
+- Added button action binds
+- Added doors
+- Added backgrounds
+
+Version 0.4
+- Added button press or hold modes
+- Added cutscenes
+- Added zones
+- Added more action settings
+- Added price for collectibles
+- Added save and load options
+
+Version 0.5
+- Added soft tile
+- Added save and load character settings
+- Added cancel y momentum on head-bump and accelerated movement
+- SFX can now be random with the _rnd suffix in file names
+
+Version 0.6
+- Added text
+- Added more glyphs for keyboard, Greek, Cyrillic, Phoenetic, Latin with accents, Arabic and Japanese
+- Added multi-active, actor-friendly and colors for zones
+- Added breakable tiles and chain breaks
+
+Version 0.7
+- Added TE launcher
+- Added door transitions
+- Added UI iterators and bars
+- Added the away animation
+- Added save slots for in-game progress
+- Added the ability for backgrounds to render in front of everything
+- Tiles and backgrounds can now be animated
+- Added first track and looping track
+- Added the ability for collectibles to trigger cutscenes
+
+Version 0.8
+- Added more information in miscellaneous, console and debug mode
+- Added active directories for more complex game builds
+- Added Uİ modes and tokens
+- Added the ability to move an object in a cutscene relative to its current position rather than raw position
+- Replaced press or hold modes with each player's action press, hold or release
+- Optimized ports
+- Added animated background animation options in cutscenes, restart, random, next and previous frame, specifically for videos/movies
+
+Version 0.9
+- Moved all the tile settings to tile type settings, tiles now have hitboxes
+- Refactored tiles, characters, collectibles and entities
+- Added support for shaders
+- Many bug fixes
+- Bug fix relating to saves cutting out because of an Uİ bug
+- Zones are now able to move and rotate tiles and collectibles
+- Players can now be defeated and combat system is implemented
+- Added menus, many customizations, during which players can now join and leave game, be in-game
+- Added text behaviors and formatting
+- Added Uİ rendering per player
+
+
+
+
+
+
+
+
+
+
+
+
+- Animated doors ****1****
+- Dialogue settings ****3****
+- Copy-paste settings ****3****
+- Text pop up every collection/defeat/break etc and text behaviors ****2****
+- Advanced Aİ for NPC / more behaviors ****5****
+- Pathfinding ****5****
+- More cutscene settings (and for certain objects) ****3****
+- Collectible collected animation ****1****
+- Collectible sets ****2****
+- Bossfights ****3****
+- Brushes in tile editor ****2.5****
+- Undo & Redo settings ****5****
+- Layer selection settings ****1****
+- Vehicles ****4****
+- Water ****4****
+- İtems and inventory ****5****
+- İnteractable and absorbing tiles (e.g hiding in a trashcan or Donkey Kong flying out a spinning barrel) ****3****
+- Wall slide, double jump, bouncy/slippery tiles ****2****
+- Slopes ****2.5****
+- Grappling ****3****
+- Entity splitting apart ****3****
+- Entity consumed/trapped (e.g Yoshi putting someone in an egg) ****4****
+- Sub-entities (e.g Kirby forms) ****4****
+- Particles ****3****
+- Player switching character (e.g Donkey Kong switching to Diddy Kong) ****5****
+- Flying away action ****1****
+- Landing action ****1****
+- Manipulating other entities ****1****
+- Changing object rotation/size (& in cutscenes) ****3****
+- Conditions ****4****
+- More room and camera settings (shaking camera) ****3****
+- Level selection mode ****3****
+- Game evaluation mode ****5****
+- Top-down mode ****4****
+- Own objects/classes (Kirro's idea) (integrating code?) ****7****
+- 3D rendering ****10****
+- 2P mode/splitscreen ****7****
+- More performant ****1****
+- Networking ****5****
