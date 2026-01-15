@@ -1128,11 +1128,14 @@ def set_stat_effect(none):
   main.gamestate = 34
   main.buttons[34].clear()
   if main.game_stats[main.selected_stat] == int or main.game_stats[main.selected_stat] == float: # Health
-    for index, stat in enumerate([("HP", "heart", "hp"), ("Stagger (increases knockback)", "heart", "stagger"), ("Main Score", "main score", "main score"), ("Speed", "run", "speed"), ("Leap", "arrow point up", "leap"), ("Set", "set", "set")]):
-      main.buttons[34].append(Button(110 + (index * 34), 130, 32, 32, "Effect: " + stat[0], "Assets/editor/" + stat[1] + ".png", set_effect, stat[2], button_type="Effect"))
+    for index, stat in enumerate([("HP", "heart", "hp"), ("Stagger (increases knockback)", "heart", "stagger"), ("Life Points", "life_point", "lives"), ("Timer (Count Down)", "timer", "timer down"), ("Timer (Count Up)", "timer", "timer up"), ("Main Score", "main score", "main score"), ("Speed", "run", "speed"), ("Leap", "arrow point up", "leap"), ("Set", "set", "set")]):
+      main.buttons[34].append(Button(104 + (index * 34), 138, 32, 32, "Effect: " + stat[0], "Assets/editor/" + stat[1] + ".png", set_effect, stat[2], button_type="Effect"))
   if main.game_stats[main.selected_stat] == bool:
     for index, stat in enumerate([("Ability for A Button", "a button", "ability a"), ("Ability for B Button", "b button", "ability b"), ("Ability for X Button", "x button", "ability x"), ("Ability for Y Button", "y button", "ability y")]):
-      main.buttons[34].append(Button(110 + (index * 34), 130, 32, 32, f"Effect: {stat[0]}", "Assets/editor/" + stat[1] + ".png", set_effect, stat[2], button_type="Effect"))
+      main.buttons[34].append(Button(104 + (index * 34), 138, 32, 32, f"Effect: {stat[0]}", "Assets/editor/" + stat[1] + ".png", set_effect, stat[2], button_type="Effect"))
+  if main.game_stats[main.selected_stat] == str:
+    for index, stat in enumerate([("Character", "character", "character"), ("Map", "map", "map")]):
+      main.buttons[34].append(Button(104 + (index * 34), 138, 32, 32, f"Effect: {stat[0]}", "Assets/editor/" + stat[1] + ".png", set_effect, stat[2], button_type="Effect"))
     #for index, stat in enumerate([("Ability for A Button for Click", "a button click", "ability a click"), ("Ability for B Button for Click", "b button click", "ability b click"), ("Ability for X Button for Click", "x button click", "ability x click"), ("Ability for Y Button for Click", "y button click", "ability y click")]):
     #  main.buttons[34].append(Button(110 + (index * 34), 164, 32, 32, f"Effect: {stat[0]}", "Assets/editor/" + stat[1] + ".png", set_effect, stat[2], button_type="Effect"))
     #for index, stat in enumerate([("Ability for A Button for Hold", "a button hold", "ability a hold"), ("Ability for B Button for Hold", "b button hold", "ability b hold"), ("Ability for X Button for Hold", "x button hold", "ability x hold"), ("Ability for Y Button for Hold", "y button hold", "ability y hold")]):
@@ -2082,7 +2085,9 @@ def add_reposition(none):
 def stay_on_changed_rect(none): main.rooms[main.selected_room].cutscenes[main.selected_cutscene].animations[main.selected_cutscene_attrib_index]["SOCR"] = not main.rooms[main.selected_room].cutscenes[main.selected_cutscene].animations[main.selected_cutscene_attrib_index]["SOCR"]
 def set_hidden_for_key(none): main.rooms[main.selected_room].cutscenes[main.selected_cutscene].animations[main.selected_cutscene_attrib_index]["Hidden"] = not main.rooms[main.selected_room].cutscenes[main.selected_cutscene].animations[main.selected_cutscene_attrib_index]["Hidden"]
 def set_destroy_tile_for_key(none): main.rooms[main.selected_room].cutscenes[main.selected_cutscene].animations[main.selected_cutscene_attrib_index]["Action"] = "destroy"
-def set_transport_door_for_key(none): main.rooms[main.selected_room].cutscenes[main.selected_cutscene].animations[main.selected_cutscene_attrib_index]["Action"] = "transport"
+def set_transport_door_for_key(none):
+  if main.rooms[main.selected_room].cutscenes[main.selected_cutscene].animations[main.selected_cutscene_attrib_index]["Action"] != "transport": main.rooms[main.selected_room].cutscenes[main.selected_cutscene].animations[main.selected_cutscene_attrib_index]["Action"] = "transport"
+  else: main.rooms[main.selected_room].cutscenes[main.selected_cutscene].animations[main.selected_cutscene_attrib_index]["Action"] = ""
 
 def remove_action_for_cs(none): main.rooms[main.selected_room].cutscenes[main.selected_cutscene].animations[main.selected_cutscene_attrib_index]["Action"] = ""
 
@@ -2797,6 +2802,10 @@ def clear_game(none=None):
     else: main.character_types[chr]["object"].wall_slider = False
   main.random_const = random.randrange(0, 100)
   main.time_since_start = time()
+  main.timer_down_found = False
+  main.timer_up_found = False
+  for stat in (stat for stat in main.game_stats if main.game_stats_effect[stat] == "timer up"): main.timer_up_found = True
+  for stat in (stat for stat in main.game_stats if main.game_stats_effect[stat] == "timer down"): main.timer_down_found = True
   k_a = False; k_b = False; k_x = False; k_y = False
   k_right = False; k_left = False; k_up = False; k_down = False
   k_r = False; k_l = False
@@ -3010,6 +3019,8 @@ class Main:
     self.playback_on = False
     self.key_frame_rect = pygame.Rect((0, 0), (0, 0))
     self.last_frame_active = 0
+    self.timer_down_found = False
+    self.timer_up_found = False
     #self.game_stats = {"Score": int, "Liras": int, "Arrows": int, "Hearts": float, "Red_Renk_Gem": bool, "Yellow_Renk_Gem": bool, "Green_Renk_Gem": bool, "Blue_Renk_Gem": bool, "Name": str}
     
     # self.game_stats = {"Score": int, "Hearts": int}
@@ -4112,11 +4123,12 @@ class Main:
         if self.user_certainty: self.editor_mode = False; self.user_certainty = False; self.reset("")
       elif self.remember_gs == 15:
         for index, ui in enumerate(self.ui.instances.values()):
-          if self.ui.instances[main.selected_stat][str(index + 1)]["Stat"] == self.selected_stat:
-            self.ui.instances[self.rename_target] = self.ui.instances[self.selected_stat]
-            self.ui.instances[main.selected_stat][str(index + 1)]["Stat"] = self.rename_target
-            self.ui.instances.pop(self.selected_stat)
-            break
+          if main.selected_stat in self.ui.instances:
+            if self.ui.instances[main.selected_stat][str(index + 1)]["Stat"] == self.selected_stat:
+              self.ui.instances[self.rename_target] = self.ui.instances[self.selected_stat]
+              self.ui.instances[main.selected_stat][str(index + 1)]["Stat"] = self.rename_target
+              self.ui.instances.pop(self.selected_stat)
+              break
         vartype = self.game_stats[self.instance_target]
         self.game_stats_initpoint[self.rename_target] = self.game_stats_initpoint[self.instance_target]
         self.game_stats_effect[self.rename_target] = self.game_stats_effect[self.instance_target]
@@ -6112,31 +6124,6 @@ class Main:
     for layer in self.rooms[self.current_room].layers[::-1]:
       for actor in layer.actors: actor.display_projectiles(screen, dt)
 
-    for room in self.rooms:
-      for door in [door for door in room.doors if not door.transition_override_ui]:
-        screen = door.play_transition(screen, dt)
-        if (door.transition_pre_immobilize_player or door.transition_post_immobilize_player) and not door.t_playing:
-          for player in self.players: player.immobilize = False
-        if (not door.t_over) and door.t_playing and door.transition_pre_immobilize_player:
-          for player in [player for player in self.players if player.rect.colliderect(door.rect)]: player.immobilize = True
-        if door.t_over and door.t_playing and door.transition_post_immobilize_player:
-          for player in [player for player in self.players if player.rect.colliderect(door.rect)]: player.immobilize = True
-
-    #for player in self.players: player.render_ui(screen, fontsmaller)
-    self.rooms[self.current_room].render_backgrounds(screen, self.playback_on, dt, bg=False)
-    for layer in self.rooms[self.current_room].layers[::-1]: layer.render_texts(screen, self.playback_on, dt, True)
-    self.ui.render(screen, clock)
-
-    for room in self.rooms:
-      for door in [door for door in room.doors if door.transition_override_ui]:
-        screen = door.play_transition(screen, dt)
-        if (door.transition_pre_immobilize_player or door.transition_post_immobilize_player) and not door.t_playing:
-          for player in self.players: player.immobilize = False
-        if (not door.t_over) and door.t_playing and door.transition_pre_immobilize_player:
-          for player in [player for player in self.players if player.rect.colliderect(door.rect)]: player.immobilize = True
-        if door.t_over and door.t_playing and door.transition_post_immobilize_player:
-          for player in [player for player in self.players if player.rect.colliderect(door.rect)]: player.immobilize = True
-
     #Draw Game Menu
     if main.rooms[main.current_room].menu_active:
       for player in main.players: player.immobilize = True
@@ -6246,10 +6233,35 @@ class Main:
               except IndexError: button["Timer2"].reset()
       if menu_type == "vertical" and not selected: main.rooms[main.current_room].selected_item[1] = 0
       if menu_type == "horizontal" and not selected: main.rooms[main.current_room].selected_item[0] = 0
-      
+    
+    for room in self.rooms:
+      for door in [door for door in room.doors if not door.transition_override_ui]:
+        screen = door.play_transition(screen, dt)
+        if (door.transition_pre_immobilize_player or door.transition_post_immobilize_player) and not door.t_playing:
+          for player in self.players: player.immobilize = False
+        if (not door.t_over) and door.t_playing and door.transition_pre_immobilize_player:
+          for player in [player for player in self.players if player.rect.colliderect(door.rect)]: player.immobilize = True
+        if door.t_over and door.t_playing and door.transition_post_immobilize_player:
+          for player in [player for player in self.players if player.rect.colliderect(door.rect)]: player.immobilize = True
+
+    #for player in self.players: player.render_ui(screen, fontsmaller)
+    self.rooms[self.current_room].render_backgrounds(screen, self.playback_on, dt, bg=False)
+    for layer in self.rooms[self.current_room].layers[::-1]: layer.render_texts(screen, self.playback_on, dt, True)
+    self.ui.render(screen, clock)
+
+    for room in self.rooms:
+      for door in [door for door in room.doors if door.transition_override_ui]:
+        screen = door.play_transition(screen, dt)
+        if (door.transition_pre_immobilize_player or door.transition_post_immobilize_player) and not door.t_playing:
+          for player in self.players: player.immobilize = False
+        if (not door.t_over) and door.t_playing and door.transition_pre_immobilize_player:
+          for player in [player for player in self.players if player.rect.colliderect(door.rect)]: player.immobilize = True
+        if door.t_over and door.t_playing and door.transition_post_immobilize_player:
+          for player in [player for player in self.players if player.rect.colliderect(door.rect)]: player.immobilize = True
+
     if self.rooms[self.current_room].track and ((self.gamestate == 10 and self.editor_mode) or (self.gamestate == 1 and not self.editor_mode)) and not pygame.mixer.music.get_busy(): pygame.mixer.music.load(self.active_directory + f"Sounds/tracks/{self.rooms[self.current_room].track}"); pygame.mixer.music.play(-1, 0.0); self.track = self.rooms[self.current_room].track
     if k_back and self.gamestate == 1 and not self.editor_mode: self.game_paused = True; self.gamestate = 0; k_back = False; FPS = 240; pygame.mixer.music.pause()
-    
+
     if self.debug:
       screen.blit(launcherfonttiny.render("FPS: " + str(round(clock.get_fps(), 2)) + "\nCamera Scroll: x " + str(round(self.camera.scroll[0], 2)) + ", y " + str(round(self.camera.scroll[1], 2)) + "\nCutscene Playing? " + str(self.playback_on) + "\nCutscene Key: " + str(self.selected_key) + "\nLayers Count: " + str(len(self.rooms[self.current_room].layers)) + "\nBackgrounds Count: " + str(len(self.rooms[self.current_room].backgrounds)) + "\nCurrent Room: Index " + str(self.current_room) + ", Name: " + str(self.rooms[self.current_room].name), True, "White").convert_alpha(), (0, 0))
       for player in self.players:

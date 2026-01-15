@@ -298,7 +298,7 @@ class Actor:
       if isinstance(self, Player):
         self.combo_activation_count -= 1
         if self.state_button:
-          if self.button_dict[self.state_button]: self.combo_activation_count = 3
+          if self.button_dict[self.state_button]: self.combo_activation_count = 50
         if action.frants[self.frame - 1].combo_unit != action.frants[self.frame].combo_unit and self.combo_activation_count < 0:
           for frame in [frame for frame in action.frants if frame.frame > self.frame and frame.combo_unit == 0]: self.frame = frame.frame; break
           else:
@@ -591,8 +591,6 @@ class Player(Actor): #we use su
     self.in_ = True
     self.hide_if_out = False
     for stat in (stat for stat in self.main.game_stats if self.main.game_stats_effect[stat] == "hp"): self.hp = self.main.game_stats_initpoint[stat]
-    for stat in (stat for stat in self.main.game_stats if self.main.game_stats_effect[stat] == "speed" and self.main.game_stats[stat] == int): self.speed = self.main.game_stats_initpoint[stat]
-    for stat in (stat for stat in self.main.game_stats if self.main.game_stats_effect[stat] == "leap" and self.main.game_stats[stat] == int): self.jump_force = -int(self.main.game_stats_initpoint[stat])
 
   def update(self, screen, cutscene=False, dt=1):
     if self.state in self.character.actions and self.frame < len(self.character.actions[self.state].frants): rect = pygame.FRect((self.rect.x, self.rect.y), (self.character.actions[self.state].frants[self.frame].rect.width, self.character.actions[self.state].frants[self.frame].rect.height))
@@ -600,8 +598,12 @@ class Player(Actor): #we use su
     
     self.display(screen=screen, cutscene=cutscene)
 
-    for stat in (stat for stat in self.main.game_stats if self.main.game_stats_effect[stat] == "speed" and self.main.game_stats[stat] == int): self.speed = self.stats[stat]
-    for stat in (stat for stat in self.main.game_stats if self.main.game_stats_effect[stat] == "leap" and self.main.game_stats[stat] == int): self.jump_force = -int(self.stats[stat])
+    for stat in (stat for stat in self.main.game_stats if self.main.game_stats_effect[stat] == "speed"): self.speed = self.stats[stat]
+    for stat in (stat for stat in self.main.game_stats if self.main.game_stats_effect[stat] == "leap"): self.jump_force = -int(self.stats[stat])
+    if self.main.timer_up_found:
+      for stat in (stat for stat in self.main.game_stats if self.main.game_stats_effect[stat] == "timer up"): self.stats[stat] = self.main.game_stats_initpoint[stat] + (self.main.now - self.main.time_since_start)
+    if self.main.timer_down_found:
+      for stat in (stat for stat in self.main.game_stats if self.main.game_stats_effect[stat] == "timer down"): self.stats[stat] = self.main.game_stats_initpoint[stat] - (self.main.now - self.main.time_since_start)
 
     css = []
     for cs in self.main.rooms[self.main.current_room].cutscenes: css.append(cs.name)
@@ -991,6 +993,7 @@ class Player(Actor): #we use su
           self.combo_activation_count = -1
           if self.character.actions[state].combo == "none" or (self.port.buttons["Hold"]["right"] and self.character.actions[state].combo == "right") or (self.port.buttons["Hold"]["left"] and self.character.actions[state].combo == "left") or (self.port.buttons["Hold"]["up"] and self.character.actions[state].combo == "up") or (self.port.buttons["Hold"]["down"] and self.character.actions[state].combo == "down") or ((self.port.buttons["Hold"]["right"] or self.port.buttons["Hold"]["left"]) and self.character.actions[state].combo == "side") or ((self.port.buttons["Hold"]["up"] or self.port.buttons["Hold"]["down"]) and self.character.actions[state].combo == "updown") or ((self.port.buttons["Hold"]["right"] or self.port.buttons["Hold"]["left"] or self.port.buttons["Hold"]["up"] or self.port.buttons["Hold"]["down"]) and self.character.actions[state].combo == "all around"):
             self.state = state; self.frame = 0; self.state_button = button; self.wait_timer.reset()
+            self.button_dict[self.state_button] = False
             if self.character.actions[self.state].frants[self.frame - 1].sound:
               if type(self.character.actions[self.state].frants[self.frame - 1].sound) == list: self.character.actions[self.state].frants[self.frame - 1].sfx = pygame.mixer.Sound(self.main.active_directory + "Sounds/sfx/" + self.character.actions[self.state].frants[self.frame - 1].sound[random.randrange(0, len(self.character.actions[self.state].frants[self.frame - 1].sound))])
               self.character.actions[self.state].frants[self.frame - 1].sfx.play()
